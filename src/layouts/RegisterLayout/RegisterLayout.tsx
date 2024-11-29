@@ -1,12 +1,14 @@
-type Props = {
-  children?: React.ReactNode
-}
+import Footer from '../../components/Footer'
+import RegisterHeader from '../../components/RegisterHeader'
+
+type Props = { children?: React.ReactNode }
 
 export default function RegisterLayout({ children }: Props) {
   return (
     <div>
-      RegisterLayout
+      <RegisterHeader />
       {children}
+      <Footer />
     </div>
   )
 }
