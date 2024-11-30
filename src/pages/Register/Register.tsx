@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { rules } from '../../utils/rules'
+import { getRules } from '../../utils/rules'
 
 export interface FormData {
   email: string
@@ -11,15 +11,24 @@ export interface FormData {
 export default function Register() {
   const {
     register,
+    getValues,
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>()
+  const rules = getRules(getValues)
 
-  const onSubmit = handleSubmit((data) => {
-    // console.log('🚀 ~ data:', data)
-  })
+  const onSubmit = handleSubmit(
+    (data) => {
+      console.log('🚀 ~ data:', data)
+      // console.log('🚀 ~ data:', data)
+    },
+    (data) => {
+      console.log('🚀 ~ data:', data)
+      const password = getValues('password')
+      console.log('🚀 ~ password:', password)
+    }
+  )
 
-  console.log('🚀 ~ errors:', errors)
   return (
     <div className='bg-orange'>
       <div className='max-w-7xl mx-auto px-4'>
@@ -39,6 +48,7 @@ export default function Register() {
               <div className='mt-2'>
                 <input
                   type='password'
+                  autoComplete='on'
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
                   placeholder='Password'
                   {...register('password', rules.password)}
@@ -48,9 +58,12 @@ export default function Register() {
               <div className='mt-2'>
                 <input
                   type='password'
+                  autoComplete='on'
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
                   placeholder='Confirm password'
-                  {...register('confirm_password', rules.confirm_password)}
+                  {...register('confirm_password', {
+                    ...rules.confirm_password
+                  })}
                 />
                 <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.confirm_password?.message}</div>
               </div>
