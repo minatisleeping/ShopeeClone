@@ -22,8 +22,7 @@ export const getRules = (getValues?: UseFormGetValues<any> | undefined): Rules =
     minLength: { value: 6, message: 'Độ dài tối thiểu là 6!' },
     maxLength: { value: 160, message: 'Độ dài tối đa là 160!' },
     validate:
-      typeof getValues === 'function'
-        ? (value) => value === getValues('password') || 'Password không trùng khớp!'
-        : undefined
+      // typeof getValues === 'function'
+      getValues ? (value) => value === getValues('password') || 'Password không trùng khớp!' : undefined
   }
 })
