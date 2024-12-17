@@ -1,6 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useMatch } from 'react-router-dom'
 
 export default function RegisterHeader() {
+  // Xem cái route có phải là register hay không để render title
+  const regiserMatch = useMatch('/register')
+  const isRegisterPage = !!regiserMatch
+
   return (
     <header className='py-5'>
       <div className='container mx-auto px-4'>
@@ -12,7 +16,7 @@ export default function RegisterHeader() {
               </g>
             </svg>
           </Link>
-          <div className='ml-5 text-xl lg:text-2xl'>Đăng Ký</div>
+          <div className='ml-5 text-xl lg:text-2xl'>{isRegisterPage ? 'Đăng Ký' : 'Đăng Nhập'}</div>
         </nav>
       </div>
     </header>
