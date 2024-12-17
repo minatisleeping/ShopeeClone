@@ -1,29 +1,21 @@
 import { Link } from 'react-router-dom'
-import { useFloating } from '@floating-ui/react-dom'
-import { useRef, useState } from 'react'
-import { FloatingPortal, arrow } from '@floating-ui/react'
-import { offset, shift } from '@floating-ui/dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import Popover from '../Popover'
 
 function Header() {
-  const [isOpen, setOpen] = useState(false)
-  const arrowRef = useRef<HTMLElement>(null)
-  const { refs, middlewareData, x, y, strategy } = useFloating({
-    middleware: [offset(6), shift(), arrow({ element: arrowRef })]
-  })
-
-  const showPopover = () => setOpen(true)
-  const hidePopover = () => setOpen(false)
-
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
         <div className='flex justify-end'>
-          <div
+          <Popover
             className='flex items-center py-1 hover:text-gray-300 cursor-pointer'
-            ref={refs.setReference}
-            onMouseEnter={showPopover}
-            onMouseLeave={hidePopover}
+            renderPopover={
+              <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
+                <div className='flex items-start flex-col py-2 pl-3 pr-28'>
+                  <button className='cursor-default py-2 px-3 text-orange'>Tiếng Việt</button>
+                  <button className='cursor-default py-2 px-3 hover:text-orange mt-2'>English</button>
+                </div>
+              </div>
+            }
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -50,52 +42,41 @@ function Header() {
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
             </svg>
-            <FloatingPortal>
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    ref={refs.setFloating}
-                    style={{
-                      position: strategy,
-                      top: y ?? 0,
-                      left: x ?? 0,
-                      width: 'max-content',
-                      transformOrigin: `${middlewareData?.arrow?.x}px top`
-                    }}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <span
-                      ref={arrowRef}
-                      className='border-x-transparent border-t-transparent border-b-white border-[11px] absolute translate-y-[-95%]'
-                      style={{
-                        left: middlewareData?.arrow?.x,
-                        top: middlewareData?.arrow?.y
-                      }}
-                    ></span>
-                    <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
-                      <div className='flex flex-col py-2 px-3'>
-                        <button className='cursor-auto py-2 px-3 text-orange'>Tiếng Việt</button>
-                        <button className='cursor-auto py-2 px-3 hover:text-orange mt-2'>English</button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </FloatingPortal>
-          </div>
-          <div className='flex items-center py-1 hover:text-gray-300 cursor-pointer ml-6'>
+          </Popover>
+          <Popover
+            className='flex items-center py-1 hover:text-gray-300 cursor-pointer ml-6'
+            renderPopover={
+              <div className='shadow-md rounded-sm border border-gray-200'>
+                <Link
+                  to='/'
+                  className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
+                >
+                  Tài khoản của tôi
+                </Link>
+                <Link
+                  to='/'
+                  className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
+                >
+                  Đơn mua
+                </Link>
+                <Link
+                  to='/'
+                  className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
+                >
+                  Đăng xuất
+                </Link>
+              </div>
+            }
+          >
             <div className='w-6 h-6 mr-2 flex-shrink-0'>
               <img
                 src='https://upload.wikimedia.org/wikipedia/vi/5/5e/Itachi_Akatsuki.png'
-                alt=''
+                alt='avatar'
                 className='w-full h-full object-cover rounded-full'
               />
             </div>
             <span>Itachi Uchiha</span>
-          </div>
+          </Popover>
         </div>
         <div className='grid grid-cols-12 gap-4 mt-4 items-end'>
           <Link to='/' className='col-span-2'>
