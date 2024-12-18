@@ -1,5 +1,5 @@
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form'
-import { FormData } from '../../pages/Register/Register'
+import { FormData } from 'src/pages/Register/Register'
 
 interface Props {
   type: React.HTMLInputTypeAttribute

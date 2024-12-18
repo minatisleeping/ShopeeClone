@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import Popover from '../Popover'
-import { logout } from '../../apis/auth.api'
 import { useMutation } from '@tanstack/react-query'
-import { AppContext } from '../../contexts/app.context'
 import { useContext } from 'react'
+import path from 'src/constants/path'
+import { logout } from 'src/apis/auth.api'
+import { AppContext } from 'src/contexts/app.context'
+import Popover from 'src/components/Popover'
 
 function Header() {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
@@ -21,7 +22,7 @@ function Header() {
       <div className='container'>
         <div className='flex justify-end'>
           <Popover
-            className='flex items-center py-1 hover:text-gray-300 cursor-pointer'
+            className='flex items-center py-1 hover:text-white/70 cursor-pointer'
             renderPopover={
               <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
                 <div className='flex items-start flex-col py-2 pl-3 pr-28'>
@@ -59,23 +60,23 @@ function Header() {
           </Popover>
           {isAuthenticated && (
             <Popover
-              className='flex items-center py-1 hover:text-gray-300 cursor-pointer ml-6'
+              className='flex items-center py-1 hover:text-white/70 cursor-pointer ml-6'
               renderPopover={
                 <div className='shadow-md rounded-sm border border-gray-200'>
                   <Link
-                    to='/profile'
+                    to={path.profile}
                     className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
                   >
                     Tài khoản của tôi
                   </Link>
                   <Link
-                    to='/'
+                    to={path.home}
                     className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
                   >
                     Đơn mua
                   </Link>
                   <Link
-                    to='/'
+                    to={path.home}
                     className='block py-3 px-4 hover:bg-slate-50 bg-white hover:font-medium hover:text-cyan-500 cursor-default text-left capitalize'
                     onClick={handleLogout}
                   >
@@ -96,11 +97,11 @@ function Header() {
           )}
           {!isAuthenticated && (
             <div className='flex items-center'>
-              <Link to='/register' className='mx-3 capitalize hover:text-white/70'>
+              <Link to={path.register} className='mx-3 capitalize hover:text-white/70'>
                 Đăng ký
               </Link>
               <div className='border border-r-[1px] border-r-white/40 h-4'></div>
-              <Link to='/login' className='mx-3 capitalize hover:text-white/70'>
+              <Link to={path.login} className='mx-3 capitalize hover:text-white/70'>
                 Đăng nhập
               </Link>
             </div>

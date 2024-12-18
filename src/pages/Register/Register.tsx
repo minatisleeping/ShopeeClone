@@ -1,16 +1,17 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import Input from '../../components/Input'
-import { schema, Schema } from '../../utils/rules'
+import Input from 'src/components/Input'
+import { schema, Schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js'
 import { useMutation } from '@tanstack/react-query'
-import { registerAccount } from '../../apis/auth.api'
+import { registerAccount } from 'src/apis/auth.api'
 import { omit } from 'lodash'
-import { isAxiosUnprocessableEntityError } from '../../utils/utils'
-import { ErrorResponse } from '../../types/utils.type'
-import { AppContext } from '../../contexts/app.context'
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
+import { ErrorResponse } from 'src/types/utils.type'
+import { AppContext } from 'src/contexts/app.context'
 import { useContext } from 'react'
-import Button from '../../components/Button'
+import Button from 'src/components/Button'
+import path from 'src/constants/path'
 
 type FormData = Schema
 
@@ -104,7 +105,7 @@ export default function Register() {
                 </div>
                 <div className='mt-2 flex justify-center items-center text-sm'>
                   <span className='text-gray-400'>Bạn đã có tài khoản?</span>
-                  <Link to='/login' className='text-orange font-normal ml-1'>
+                  <Link to={path.login} className='text-orange font-normal ml-1'>
                     Đăng nhập
                   </Link>
                 </div>

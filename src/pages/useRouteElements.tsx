@@ -1,13 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Navigate, Outlet, useRoutes } from 'react-router'
-import MainLayout from '../layouts/MainLayout'
-import RegisterLayout from '../layouts/RegisterLayout'
 import Login from './Login'
 import ProductList from './ProductList'
 import Register from './Register'
 import Profile from './Profile'
 import { useContext } from 'react'
-import { AppContext } from '../contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
+import path from 'src/constants/path'
+import MainLayout from 'src/layouts/MainLayout'
+import RegisterLayout from 'src/layouts/RegisterLayout'
 
 const ProtectedRoutes = () => {
   const { isAuthenticated } = useContext(AppContext)
@@ -22,7 +23,7 @@ const RejectedRoutes = () => {
 export default function useRouteElements() {
   const routeElements = useRoutes([
     {
-      path: '/',
+      path: path.home,
       index: true,
       element: (
         <MainLayout>
@@ -31,11 +32,11 @@ export default function useRouteElements() {
       )
     },
     {
-      path: '/',
+      path: path.home,
       element: <ProtectedRoutes />,
       children: [
         {
-          path: '/profile',
+          path: path.profile,
           element: (
             <MainLayout>
               <Profile />
@@ -46,11 +47,11 @@ export default function useRouteElements() {
     },
     //* Protected routes - only accessible when authenticated
     {
-      path: '/',
+      path: path.home,
       element: <RejectedRoutes />,
       children: [
         {
-          path: '/login',
+          path: path.login,
           element: (
             <RegisterLayout>
               <Login />
@@ -58,7 +59,7 @@ export default function useRouteElements() {
           )
         },
         {
-          path: '/register',
+          path: path.register,
           element: (
             <RegisterLayout>
               <Register />
