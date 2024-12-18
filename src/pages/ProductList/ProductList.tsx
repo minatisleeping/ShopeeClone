@@ -1,6 +1,6 @@
 import AsideFilter from 'src/pages/ProductList/AsideFilter'
 import Product from 'src/pages/ProductList/Product/Product'
-import SortProduct from 'src/pages/ProductList/SortProduct'
+import SortProduct from 'src/pages/ProductList/SortProductList'
 
 export default function ProductList() {
   return (
