@@ -17,10 +17,9 @@ type FormData = Schema
 
 export default function Register() {
   const navigate = useNavigate()
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, storeProfile } = useContext(AppContext)
   const {
     register,
-    // getValues,
     setError,
     handleSubmit,
     formState: { errors }
@@ -34,10 +33,10 @@ export default function Register() {
 
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
-    // console.log('🚀 ~ body:', body)
     registerAccountMutation.mutate(body, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        storeProfile(data.data.data.user)
         navigate('/')
       },
       onError: (error) => {
