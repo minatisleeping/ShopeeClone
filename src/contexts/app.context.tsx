@@ -1,5 +1,5 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from 'react'
-import { getAccessTokenFromLocalStorage } from '../utils/auth'
+import { getAccessTokenFromLocalStorage } from 'src/utils/auth'
 
 interface AppContextInterface {
   isAuthenticated: boolean
