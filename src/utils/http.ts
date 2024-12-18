@@ -3,18 +3,19 @@ import { StatusCodes } from 'http-status-codes'
 import { toast } from 'react-toastify'
 import {
   getAccessTokenFromLocalStorage,
-  clearAccessTokenFromLocalStorage,
-  storeAccessTokenToLocalStorage
+  clearFromLocalStorage,
+  storeAccessTokenToLocalStorage,
+  storeProfile
 } from './auth'
 import path from 'src/constants/path'
 import { AuthResponse } from 'src/types/auth.type'
 
 class Http {
   instance: AxiosInstance
-  private accessToken: string
+  private access_token: string
 
   constructor() {
-    this.accessToken = getAccessTokenFromLocalStorage()
+    this.access_token = getAccessTokenFromLocalStorage()
     this.instance = axios.create({
       baseURL: 'https://api-ecom.duthanhduoc.com/',
       timeout: 10000,
@@ -23,8 +24,8 @@ class Http {
 
     this.instance.interceptors.request.use(
       (config) => {
-        if (this.accessToken && config.headers) {
-          config.headers.authorization = this.accessToken
+        if (this.access_token && config.headers) {
+          config.headers.authorization = this.access_token
           return config
         }
 
@@ -39,13 +40,15 @@ class Http {
       (response) => {
         const { url } = response.config
         if (url === path.login || url === path.register) {
-          this.accessToken = (response.data as AuthResponse).data.access_token
-          storeAccessTokenToLocalStorage(this.accessToken)
+          const data = response.data as AuthResponse
+          this.access_token = (response.data as AuthResponse).data.access_token
+          storeAccessTokenToLocalStorage(this.access_token)
+          storeProfile(data.data.user)
 
           return response
         } else if (url === path.logout) {
-          this.accessToken = ''
-          clearAccessTokenFromLocalStorage()
+          this.access_token = ''
+          clearFromLocalStorage()
 
           return response
         }

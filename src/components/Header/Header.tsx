@@ -7,11 +7,12 @@ import { AppContext } from 'src/contexts/app.context'
 import Popover from 'src/components/Popover'
 
 function Header() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, profile, storeProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       setIsAuthenticated(false)
+      storeProfile(null)
     }
   })
 
@@ -92,7 +93,7 @@ function Header() {
                   className='w-full h-full object-cover rounded-full'
                 />
               </div>
-              <span>Itachi Uchiha</span>
+              <span>{profile?.email}</span>
             </Popover>
           )}
           {!isAuthenticated && (
