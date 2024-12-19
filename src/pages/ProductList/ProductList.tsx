@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import productApi from 'src/apis/product.api'
+import Pagination from 'src/components/Pagination'
 import useQueryParams from 'src/hooks/useQueryParams'
 import AsideFilter from 'src/pages/ProductList/AsideFilter'
 import Product from 'src/pages/ProductList/Product/Product'
@@ -9,11 +11,14 @@ export default function ProductList() {
   //! Lấy ra các query params hiện tại của URL
   const queryParams = useQueryParams()
 
+  const [page, setPage] = useState(1)
+
   const { data } = useQuery({
     //! Tham số đầu tiên của queryKey là tên của query, tham số thứ 2 là các query params
     queryKey: ['products', queryParams],
     queryFn: () => productApi.getProductWithPagination(queryParams)
   })
+  console.log('🚀 ~ data:', data)
 
   return (
     <div className='bg-gray-200 py-6'>
@@ -32,6 +37,7 @@ export default function ProductList() {
                   </div>
                 ))}
             </div>
+            <Pagination page={page} setPage={setPage} pageSize={7} />
           </div>
         </div>
       </div>
