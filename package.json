@@ -28,7 +28,8 @@
     "react-router-dom": "^6.4.3",
     "react-toastify": "^10.0.6",
     "vite-tsconfig-paths": "^5.1.4",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "classnames": "^2.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
