@@ -1,18 +1,18 @@
-import App from './App.tsx'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AppProvider } from './contexts/app.context.tsx'
+import { AppProvider } from 'src/contexts/app.context'
+import './index.css'
+import App from 'src/App'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } }
 })
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
+  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AppProvider>

@@ -14,7 +14,7 @@ function SortProductList() {
             Bán chạy
           </button>
           <select className='h-9 px-4 py-1 outline-none capitalize bg-white text-black text-sm hover:bg-slate-100 text-center'>
-            <option value='' disabled>
+            <option defaultValue='' disabled>
               Giá
             </option>
             <option value='price:asc'>Giá: Thấp đến Cao</option>
