@@ -3,13 +3,13 @@ import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { login } from 'src/apis/auth.api'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/contexts/app.context'
 import { ErrorResponse } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import Button from 'src/components/Button'
+import authApi from 'src/apis/auth.api'
 
 type FormData = Omit<Schema, 'confirm_password'>
 const loginSchema = schema.omit(['confirm_password'])
@@ -27,7 +27,7 @@ export default function Login() {
   })
 
   const loginMutation = useMutation({
-    mutationFn: (body: Omit<FormData, 'confirm_password'>) => login(body)
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => authApi.login(body)
   })
 
   const onSubmit = handleSubmit((data) => {
