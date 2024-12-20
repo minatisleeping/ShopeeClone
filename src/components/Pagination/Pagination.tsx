@@ -1,14 +1,17 @@
-import { Dispatch, SetStateAction } from 'react'
 import classNames from 'classnames'
+import { createSearchParams, Link } from 'react-router-dom'
+import path from 'src/constants/path'
+import { QueryConfig } from 'src/pages/ProductList/ProductList'
 
 interface Props {
-  page: number
-  setPage: Dispatch<SetStateAction<number>>
+  queryConfig: QueryConfig
   pageSize: number
 }
 
-const RANGE = 2
-export default function Pagination({ page, setPage, pageSize }: Props) {
+const RANGE = 5
+export default function Pagination({ queryConfig, pageSize }: Props) {
+  const page = Number(queryConfig.page)
+
   const renderPagination = () => {
     let dotAfter = false
     let dotBefore = false
@@ -53,25 +56,68 @@ export default function Pagination({ page, setPage, pageSize }: Props) {
         }
 
         return (
-          <button
+          <Link
+            to={{
+              pathname: path.home,
+              search: createSearchParams({
+                ...queryConfig,
+                page: String(pageNumber)
+              }).toString()
+            }}
             key={index}
             className={classNames('bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer border', {
               'border-cyan-500': pageNumber === page,
               'border-transparent': pageNumber !== page
             })}
-            onClick={() => setPage(pageNumber)}
+            onClick={handleScrollToTop}
           >
             {pageNumber}
-          </button>
+          </Link>
         )
       })
   }
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className='flex flex-wrap mt-6 justify-center'>
-      <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'>Prev</button>
+      {page === 1 ? (
+        <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-progress'>Prev</button>
+      ) : (
+        <Link
+          to={{
+            pathname: path.home,
+            search: createSearchParams({
+              ...queryConfig,
+              page: String(page - 1)
+            }).toString()
+          }}
+          className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'
+          onClick={handleScrollToTop}
+        >
+          Prev
+        </Link>
+      )}
       {renderPagination()}
-      <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'>Next</button>
+      {page === pageSize ? (
+        <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-progress'>Next</button>
+      ) : (
+        <Link
+          to={{
+            pathname: path.home,
+            search: createSearchParams({
+              ...queryConfig,
+              page: String(page + 1)
+            }).toString()
+          }}
+          className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'
+          onClick={handleScrollToTop}
+        >
+          Next
+        </Link>
+      )}
     </div>
   )
 }
