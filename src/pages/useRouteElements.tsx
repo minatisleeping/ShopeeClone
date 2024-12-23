@@ -9,6 +9,7 @@ import { AppContext } from 'src/contexts/app.context'
 import path from 'src/constants/path'
 import MainLayout from 'src/layouts/MainLayout'
 import RegisterLayout from 'src/layouts/RegisterLayout'
+import ProductDetail from 'src/pages/ProductDetail'
 
 const ProtectedRoutes = () => {
   const { isAuthenticated } = useContext(AppContext)
@@ -44,6 +45,14 @@ export default function useRouteElements() {
           )
         }
       ]
+    },
+    {
+      path: path.productDetail,
+      element: (
+        <MainLayout>
+          <ProductDetail />
+        </MainLayout>
+      )
     },
     //* Protected routes - only accessible when authenticated
     {
