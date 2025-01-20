@@ -1,19 +1,24 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { omit } from 'lodash'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import authApi from 'src/apis/auth.api'
+import purchaseApi from 'src/apis/purchase.api'
+import noProduct from 'src/assets/images/no-product.png'
 import Popover from 'src/components/Popover'
 import path from 'src/constants/path'
+import { purchasesStatus } from 'src/constants/purchase'
 import { AppContext } from 'src/contexts/app.context'
 import useQueryConfig from 'src/hooks/useQueryConfig'
 import { schema, Schema } from 'src/utils/rules'
+import { formatCurrency } from 'src/utils/utils'
 
 type FormData = Pick<Schema, 'name'>
 
 const nameSchema = schema.pick(['name'])
+const MAX_PRODUCT_IN_CART = 5
 
 function Header() {
   const queryConfig = useQueryConfig()
@@ -33,6 +38,13 @@ function Header() {
       storeProfile(null)
     }
   })
+
+  const { data: purchasesInCartData } = useQuery({
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchasesByStatus({ status: purchasesStatus.inCart })
+  })
+
+  const purchasesInCart = purchasesInCartData?.data.data
 
   const handleLogout = () => logoutMutation.mutate()
 
@@ -125,7 +137,7 @@ function Header() {
             >
               <div className='w-6 h-6 mr-2 flex-shrink-0'>
                 <img
-                  src='https://upload.wikimedia.org/wikipedia/vi/5/5e/Itachi_Akatsuki.png'
+                  src='https://avatars.githubusercontent.com/u/121481596?v=4'
                   alt='avatar'
                   className='w-full h-full object-cover rounded-full'
                 />
@@ -183,111 +195,50 @@ function Header() {
             <Popover
               renderPopover={
                 <div className='bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm'>
-                  <div className='p-2'>
-                    <div className='text-gray-400 capitalize'>sản phẩm mới thêm</div>
-                    <div className='mt-5'>
-                      <div className='mt-4 flex hover:bg-slate-50 cursor-default'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/sg-11134201-7rd5o-lu1q8jdvi96v37_tn'
-                            alt='product image'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            Thơm Lợn Keycaps MOA Chiều Cao 131 PBT Nóng Thăng Hoa Thủ Công Dễ Thương Bàn Phím Lợn Cho
-                            Bàn Phím Cơ Văn Phòng Bàn Phím Chơi Game DIY
+                  {purchasesInCart ? (
+                    <div className='p-2'>
+                      <div className='text-gray-400 capitalize'>sản phẩm mới thêm</div>
+                      <div className='mt-5'>
+                        {purchasesInCart?.slice(0, MAX_PRODUCT_IN_CART).map((purchase) => (
+                          <div className='mt-2 p-2 flex hover:bg-slate-50 cursor-default' key={purchase._id}>
+                            <div className='flex-shrink-0'>
+                              <img
+                                src={purchase.product.image}
+                                alt={purchase.product.name}
+                                className='w-11 h-11 object-cover'
+                              />
+                            </div>
+                            <div className='flex-grow ml-2 overflow-hidden'>
+                              <div className='truncate'>{purchase.product.name}</div>
+                            </div>
+                            <div className='flex-shrink-0 ml-2'>
+                              <span className='text-orange'>₫{formatCurrency(purchase.price_before_discount)}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className='flex-shrink-0 ml-2'>
-                          <span className='text-orange'>₫268.000</span>
-                        </div>
+                        ))}
                       </div>
-                      <div className='mt-4 flex hover:bg-slate-50 cursor-default'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/sg-11134201-7rd5o-lu1q8jdvi96v37_tn'
-                            alt='product image'
-                            className='w-11 h-11 object-cover'
-                          />
+                      <div className='mt-5 flex items-center justify-between'>
+                        <div className='text-xs text-gray-500 capitalize'>
+                          {purchasesInCart.length > MAX_PRODUCT_IN_CART
+                            ? purchasesInCart.length - MAX_PRODUCT_IN_CART
+                            : ''}
+                          Thêm hàng vào giỏ
                         </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            Thơm Lợn Keycaps MOA Chiều Cao 131 PBT Nóng Thăng Hoa Thủ Công Dễ Thương Bàn Phím Lợn Cho
-                            Bàn Phím Cơ Văn Phòng Bàn Phím Chơi Game DIY
-                          </div>
-                        </div>
-                        <div className='flex-shrink-0 ml-2'>
-                          <span className='text-orange'>₫268.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex hover:bg-slate-50 cursor-default'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/sg-11134201-7rd5o-lu1q8jdvi96v37_tn'
-                            alt='product image'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            Thơm Lợn Keycaps MOA Chiều Cao 131 PBT Nóng Thăng Hoa Thủ Công Dễ Thương Bàn Phím Lợn Cho
-                            Bàn Phím Cơ Văn Phòng Bàn Phím Chơi Game DIY
-                          </div>
-                        </div>
-                        <div className='flex-shrink-0 ml-2'>
-                          <span className='text-orange'>₫268.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex hover:bg-slate-50 cursor-default'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/sg-11134201-7rd5o-lu1q8jdvi96v37_tn'
-                            alt='product image'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            Thơm Lợn Keycaps MOA Chiều Cao 131 PBT Nóng Thăng Hoa Thủ Công Dễ Thương Bàn Phím Lợn Cho
-                            Bàn Phím Cơ Văn Phòng Bàn Phím Chơi Game DIY
-                          </div>
-                        </div>
-                        <div className='flex-shrink-0 ml-2'>
-                          <span className='text-orange'>₫268.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex hover:bg-slate-50'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/sg-11134201-7rd5o-lu1q8jdvi96v37_tn'
-                            alt='product image'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            Thơm Lợn Keycaps MOA Chiều Cao 131 PBT Nóng Thăng Hoa Thủ Công Dễ Thương Bàn Phím Lợn Cho
-                            Bàn Phím Cơ Văn Phòng Bàn Phím Chơi Game DIY
-                          </div>
-                        </div>
-                        <div className='flex-shrink-0 ml-2'>
-                          <span className='text-orange'>₫268.000</span>
-                        </div>
+                        <button className='bg-orange hover:bg-opacity-85 text-white capitalize py-2.5 px-5 shadow-2xl rounded-sm cursor-default'>
+                          Xem giỏ hàng
+                        </button>
                       </div>
                     </div>
-                    <div className='mt-5 flex items-center justify-between'>
-                      <div className='text-xs text-gray-500 capitalize'>Thêm hàng vào giỏ</div>
-                      <button className='bg-orange hover:bg-opacity-85 text-white capitalize py-2.5 px-5 shadow-2xl rounded-sm cursor-default'>
-                        Xem giỏ hàng
-                      </button>
+                  ) : (
+                    <div className='flex items-center justify-center h-[200px] w-[400px] p-[60px]'>
+                      <img src={noProduct} alt='no-product-image' className='h-[100px] w-[100px]' />
+                      <div className='mt-3 capitalize'>Chưa có sản phẩm</div>
                     </div>
-                  </div>
+                  )}
                 </div>
               }
             >
-              <Link to='/'>
+              <Link to='/' className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -302,6 +253,9 @@ function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
                   />
                 </svg>
+                <span className='absolute top-[-5px] left-[17px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
+                  {purchasesInCart?.length}
+                </span>
               </Link>
             </Popover>
           </div>

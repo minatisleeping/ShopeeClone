@@ -7,8 +7,12 @@ import { AppProvider } from 'src/contexts/app.context'
 import './index.css'
 import App from 'src/App'
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } }
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
 })
 
 createRoot(document.getElementById('root')!).render(
