@@ -1,16 +1,20 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import productApi from 'src/apis/product.api'
+import purchaseApi from 'src/apis/purchase.api'
 import ProductRating from 'src/components/ProductRating'
 import QuantityController from 'src/components/QuantityController'
+import { purchasesStatus } from 'src/constants/purchase'
+import { queryClient } from 'src/main'
 import Product from 'src/pages/ProductList/components/Product/Product'
 import { ProductListConfig, Product as ProductType } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
 
 export default function ProductDetail() {
-  const [buyCount, setBuyCount] = useState(1)
+  const [buyCount, setBuyCount] = useState<number>(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const { data: productDetailData } = useQuery({
@@ -33,7 +37,8 @@ export default function ProductDetail() {
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(product)
   })
-  console.log('🚀 ~ productsData:', productsData)
+
+  const addToCartMutation = useMutation(purchaseApi.addToCart)
 
   useEffect(() => {
     if (product && product.images.length > 0) {
@@ -53,9 +58,7 @@ export default function ProductDetail() {
     }
   }
 
-  const chooseActive = (img: string) => {
-    setActiveImage(img)
-  }
+  const chooseActive = (img: string) => setActiveImage(img)
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -77,15 +80,25 @@ export default function ProductDetail() {
     image.style.left = left + 'px'
   }
 
-  const handleRemoveZoom = () => {
-    imageRef.current?.removeAttribute('style')
-  }
+  const handleRemoveZoom = () => imageRef.current?.removeAttribute('style')
 
-  const handleBuyCount = (value: number) => {
-    setBuyCount(value)
-  }
+  const handleBuyCount = (value: number) => setBuyCount(value)
+
+  const addToCart = () =>
+    addToCartMutation.mutate(
+      { product_id: product?._id as string, buy_count: buyCount },
+      {
+        onSuccess: (data) => {
+          toast.success(data.data.message, { autoClose: 1000 })
+          queryClient.invalidateQueries({
+            queryKey: ['purchases', { status: purchasesStatus.inCart }]
+          })
+        }
+      }
+    )
 
   if (!product) return null
+
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -186,7 +199,10 @@ export default function ProductDetail() {
                 <div className='ml-6 text-sm text-gray-500'>{product.quantity} sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center'>
-                <button className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 capitalize text-orange shadow-sm hover:bg-orange/5'>
+                <button
+                  onClick={addToCart}
+                  className='flex h-12 items-center justify-center rounded-sm border border-orange bg-orange/10 px-5 capitalize text-orange shadow-sm hover:bg-orange/5'
+                >
                   <svg
                     enableBackground='new 0 0 15 15'
                     viewBox='0 0 15 15'

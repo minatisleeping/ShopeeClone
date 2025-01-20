@@ -54,7 +54,6 @@ export default function useRouteElements() {
         </MainLayout>
       )
     },
-    //* Protected routes - only accessible when authenticated
     {
       path: path.home,
       element: <RejectedRoutes />,
