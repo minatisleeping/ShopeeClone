@@ -227,9 +227,12 @@ function Header() {
                             : ''}
                           Thêm hàng vào giỏ
                         </div>
-                        <button className='bg-orange hover:bg-opacity-85 text-white capitalize py-2.5 px-5 shadow-2xl rounded-sm cursor-default'>
+                        <Link
+                          to={path.cart}
+                          className='bg-orange hover:bg-opacity-85 text-white capitalize py-2.5 px-5 shadow-2xl rounded-sm cursor-pointer'
+                        >
                           Xem giỏ hàng
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ) : (
