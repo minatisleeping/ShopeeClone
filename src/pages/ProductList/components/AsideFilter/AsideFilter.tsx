@@ -11,6 +11,7 @@ import { NoUndefinedField } from 'src/types/utils.type'
 import RatingStar from 'src/pages/ProductList/components/RatingStar'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import InputV2 from 'src/components/InputV2'
 
 interface Props {
   queryConfig: QueryConfig
@@ -20,6 +21,7 @@ interface Props {
 type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
+
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const { category } = queryConfig
   const {
@@ -130,7 +132,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Controller
+            {/* <Controller
               control={control}
               name='price_min'
               render={({ field }) => {
@@ -149,7 +151,20 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                   />
                 )
               }}
+            /> */}
+            <InputV2
+              control={control}
+              name='price_min'
+              type='number'
+              className='grow'
+              placeholder='₫ TỪ'
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+              classNameError='hidden'
+              onChange={() => {
+                trigger('price_max')
+              }}
             />
+
             <div className='mx-2 mt-2 shrink-0'>-</div>
             <Controller
               control={control}
