@@ -12,6 +12,7 @@ import path from 'src/constants/path'
 import { purchasesStatus } from 'src/constants/purchase'
 import { AppContext } from 'src/contexts/app.context'
 import useQueryConfig from 'src/hooks/useQueryConfig'
+import { queryClient } from 'src/main'
 import { schema, Schema } from 'src/utils/rules'
 import { formatCurrency } from 'src/utils/utils'
 
@@ -36,12 +37,14 @@ function Header() {
     onSuccess: () => {
       setIsAuthenticated(false)
       storeProfile(null)
+      queryClient.removeQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
     }
   })
 
   const { data: purchasesInCartData } = useQuery({
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
-    queryFn: () => purchaseApi.getPurchasesByStatus({ status: purchasesStatus.inCart })
+    queryFn: () => purchaseApi.getPurchasesByStatus({ status: purchasesStatus.inCart }),
+    enabled: isAuthenticated
   })
 
   const purchasesInCart = purchasesInCartData?.data.data
@@ -230,7 +233,7 @@ function Header() {
                       </div>
                     </div>
                   ) : (
-                    <div className='flex items-center justify-center h-[200px] w-[400px] p-[60px]'>
+                    <div className='flex flex-col items-center justify-center h-[200px] w-[400px] p-[60px]'>
                       <img src={noProduct} alt='no-product-image' className='h-[100px] w-[100px]' />
                       <div className='mt-3 capitalize'>Chưa có sản phẩm</div>
                     </div>
@@ -253,9 +256,11 @@ function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
                   />
                 </svg>
-                <span className='absolute top-[-5px] left-[17px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
-                  {purchasesInCart?.length}
-                </span>
+                {purchasesInCart && (
+                  <span className='absolute top-[-5px] left-[17px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
+                    {purchasesInCart?.length}
+                  </span>
+                )}
               </Link>
             </Popover>
           </div>
