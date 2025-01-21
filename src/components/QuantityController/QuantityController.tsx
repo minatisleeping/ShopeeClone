@@ -1,11 +1,13 @@
-import { ChangeEvent, useState } from 'react'
-import InputNumber, { PropsInputNumber } from 'src/components/InputNumber'
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+import { useState } from 'react'
+import InputNumber, { PropsInputNumber } from '../InputNumber'
 
 interface Props extends PropsInputNumber {
   max?: number
   onIncrease?: (value: number) => void
   onDecrease?: (value: number) => void
-  onTyping?: (value: number) => void
+  onType?: (value: number) => void
+  onFocusOut?: (value: number) => void
   classNameWrapper?: string
 }
 
@@ -13,50 +15,47 @@ export default function QuantityController({
   max,
   onIncrease,
   onDecrease,
-  onTyping,
+  onType,
+  onFocusOut,
   classNameWrapper = 'ml-10',
   value,
   ...rest
 }: Props) {
-  const [localValue, setLocalValue] = useState<number>(Number(value || 1))
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const [localValue, setLocalValue] = useState<number>(Number(value || 0))
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(event.target.value)
     if (max !== undefined && _value > max) {
       _value = max
     } else if (_value < 1) {
       _value = 1
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    onTyping && onTyping(_value)
+    onType && onType(_value)
     setLocalValue(_value)
   }
 
   const increase = () => {
-    let _value = Number(localValue || 1) + 1
+    let _value = Number(value || localValue) + 1
     if (max !== undefined && _value > max) {
       _value = max
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onIncrease && onIncrease(_value)
-    setLocalValue(_value++)
+    setLocalValue(_value)
   }
 
   const decrease = () => {
-    let _value = Number(localValue || 1) - 1
+    let _value = Number(value || localValue) - 1
     if (_value < 1) {
       _value = 1
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onDecrease && onDecrease(_value)
-    setLocalValue(_value--)
+    setLocalValue(_value)
   }
 
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+    onFocusOut && onFocusOut(Number(event.target.value))
+  }
   return (
-    <div className={`flex items-center ` + classNameWrapper}>
+    <div className={'flex items-center ' + classNameWrapper}>
       <button
         className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'
         onClick={decrease}
@@ -77,6 +76,7 @@ export default function QuantityController({
         classNameError='hidden'
         classNameInput='h-8 w-14 border-t border-b border-gray-300 p-1 text-center outline-none'
         onChange={handleChange}
+        onBlur={handleBlur}
         value={value || localValue}
         {...rest}
       />
