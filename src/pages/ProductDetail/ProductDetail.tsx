@@ -192,7 +192,7 @@ export default function ProductDetail() {
                 <QuantityController
                   onDecrease={handleBuyCount}
                   onIncrease={handleBuyCount}
-                  onTyping={handleBuyCount}
+                  onType={handleBuyCount}
                   value={buyCount}
                   max={product.quantity}
                 />

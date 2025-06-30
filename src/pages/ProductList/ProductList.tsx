@@ -8,6 +8,10 @@ import Product from 'src/pages/ProductList/components/Product/Product'
 import SortProductList from 'src/pages/ProductList/components/SortProductList'
 import { ProductListConfig } from 'src/types/product.type'
 
+export type QueryConfig = {
+  [key in keyof ProductListConfig]: string
+}
+
 export default function ProductList() {
   //! Lấy ra các query params hiện tại của URL
   const queryConfig = useQueryConfig()

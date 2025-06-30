@@ -1,0 +1,9 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Link } from 'react-router-dom';
+import ProductRating from 'src/components/ProductRating';
+import path from 'src/constants/path';
+import { formatCurrency, formatNumberToSocialStyle, generateNameId } from 'src/utils/utils';
+function Product({ product }) {
+    return (_jsx(Link, { to: `${path.home}${generateNameId({ name: product.name, id: product._id })}`, children: _jsxs("div", { className: 'bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform overflow-hidden', children: [_jsx("div", { className: 'relative w-full pt-[100%]', children: _jsx("img", { src: product.image, alt: 'mieng-dan-trang-rang', className: 'absolute top-0 left-0 bg-white w-full h-full object-cover' }) }), _jsxs("div", { className: 'p-2 overflow-hidden', children: [_jsx("div", { className: 'min-h-[2rem] line-clamp-2 text-xs', children: product.name }), _jsxs("div", { className: 'flex items-center mt-3', children: [_jsxs("span", { className: 'line-through max-w-[50%] text-gray-500 truncate', children: [_jsx("span", { className: 'text-xs', children: "\u20AB" }), _jsx("span", { className: 'text-sm', children: formatCurrency(product.price_before_discount) })] }), _jsxs("span", { className: 'text-orange truncate ml-1', children: [_jsx("span", { className: 'text-xs', children: "\u20AB" }), _jsx("span", { className: 'text-sm', children: formatCurrency(product.price) })] })] }), _jsxs("div", { className: 'mt-3 flex items-center justify-start', children: [_jsx(ProductRating, { rating: product.rating }), _jsx("div", { className: 'ml-2 text-sm', children: _jsxs("span", { children: ["\u0110\u00E3 b\u00E1n ", formatNumberToSocialStyle(product.sold)] }) })] })] })] }) }));
+}
+export default Product;

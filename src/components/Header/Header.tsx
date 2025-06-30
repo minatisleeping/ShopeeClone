@@ -1,4 +1,4 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { yupResolver } from '@hookform/resolvers/dist/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { omit } from 'lodash'
 import { useContext } from 'react'
