@@ -1,9 +1,9 @@
 import Footer from 'src/components/Footer'
 import Header from 'src/components/Header'
-
-type Props = { children?: React.ReactNode }
-
-function MainLayout({ children }: Props) {
+interface Props {
+  children?: React.ReactNode
+}
+export default function MainLayout({ children }: Props) {
   return (
     <div>
       <Header />
@@ -12,5 +12,3 @@ function MainLayout({ children }: Props) {
     </div>
   )
 }
-
-export default MainLayout

@@ -2,15 +2,15 @@ import { Product, ProductList, ProductListConfig } from 'src/types/product.type'
 import { SuccessResponse } from 'src/types/utils.type'
 import http from 'src/utils/http'
 
-const URL = '/products'
-
+const URL = 'products'
 const productApi = {
-  getProductWithPagination: (params: ProductListConfig) => {
-    return http.get<SuccessResponse<ProductList>>(URL, { params })
+  getProducts(params: ProductListConfig) {
+    return http.get<SuccessResponse<ProductList>>(URL, {
+      params
+    })
   },
-
-  getProductDetail: (_id: string) => {
-    return http.get<SuccessResponse<Product>>(`${URL}/${_id}`)
+  getProductDetail(id: string) {
+    return http.get<SuccessResponse<Product>>(`${URL}/${id}`)
   }
 }
 

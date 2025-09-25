@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useState } from 'react'
-import InputNumber, { PropsInputNumber } from '../InputNumber'
+import InputNumber, { InputNumberProps } from '../InputNumber'
 
-interface Props extends PropsInputNumber {
+interface Props extends InputNumberProps {
   max?: number
   onIncrease?: (value: number) => void
   onDecrease?: (value: number) => void
@@ -54,6 +53,7 @@ export default function QuantityController({
   const handleBlur = (event: React.FocusEvent<HTMLInputElement, Element>) => {
     onFocusOut && onFocusOut(Number(event.target.value))
   }
+
   return (
     <div className={'flex items-center ' + classNameWrapper}>
       <button

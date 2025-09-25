@@ -1,27 +1,26 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from 'react'
+import { createContext, useState } from 'react'
 import { User } from 'src/types/user.type'
-import { getAccessTokenFromLocalStorage, getProfileFromLS } from 'src/utils/auth'
+import { getAccessTokenFromLS, getProfileFromLS } from 'src/utils/auth'
 
 interface AppContextInterface {
   isAuthenticated: boolean
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
   profile: User | null
-  storeProfile: Dispatch<SetStateAction<User | null>>
+  setProfile: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 const initialAppContext: AppContextInterface = {
-  isAuthenticated: !!getAccessTokenFromLocalStorage(),
+  isAuthenticated: Boolean(getAccessTokenFromLS()),
   setIsAuthenticated: () => null,
   profile: getProfileFromLS(),
-  storeProfile: () => null
+  setProfile: () => null
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext<AppContextInterface>(initialAppContext)
 
-export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(initialAppContext.isAuthenticated)
-  const [profile, storeProfile] = useState<User | null>(initialAppContext.profile)
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialAppContext.isAuthenticated)
+  const [profile, setProfile] = useState<User | null>(initialAppContext.profile)
 
   return (
     <AppContext.Provider
@@ -29,7 +28,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated,
         setIsAuthenticated,
         profile,
-        storeProfile
+        setProfile
       }}
     >
       {children}

@@ -3,31 +3,28 @@ import categoryApi from 'src/apis/category.api'
 import productApi from 'src/apis/product.api'
 import Pagination from 'src/components/Pagination'
 import useQueryConfig from 'src/hooks/useQueryConfig'
-import AsideFilter from 'src/pages/ProductList/components/AsideFilter'
-import Product from 'src/pages/ProductList/components/Product/Product'
-import SortProductList from 'src/pages/ProductList/components/SortProductList'
 import { ProductListConfig } from 'src/types/product.type'
-
-export type QueryConfig = {
-  [key in keyof ProductListConfig]: string
-}
+import AsideFilter from './components/AsideFilter'
+import Product from './components/Product/Product'
+import SortProductList from './components/SortProductList'
 
 export default function ProductList() {
-  //! Lấy ra các query params hiện tại của URL
   const queryConfig = useQueryConfig()
 
   const { data: productsData } = useQuery({
-    //! Tham số đầu tiên của queryKey là tên của query, tham số thứ 2 là các query params
     queryKey: ['products', queryConfig],
-    queryFn: () => productApi.getProductWithPagination(queryConfig as ProductListConfig),
-    keepPreviousData: true
+    queryFn: () => {
+      return productApi.getProducts(queryConfig as ProductListConfig)
+    },
+    keepPreviousData: true,
+    staleTime: 3 * 60 * 1000
   })
 
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => categoryApi.getCategories(),
-    keepPreviousData: true,
-    staleTime: 3 * 60 * 1000
+    queryFn: () => {
+      return categoryApi.getCategories()
+    }
   })
 
   return (
@@ -40,7 +37,7 @@ export default function ProductList() {
             </div>
             <div className='col-span-9'>
               <SortProductList queryConfig={queryConfig} pageSize={productsData.data.data.pagination.page_size} />
-              <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'>
+              <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
                 {productsData.data.data.products.map((product) => (
                   <div className='col-span-1' key={product._id}>
                     <Product product={product} />

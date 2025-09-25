@@ -5,24 +5,24 @@ import http from 'src/utils/http'
 const URL = 'purchases'
 
 const purchaseApi = {
-  addToCart: (body: { product_id: string; buy_count: number }) => {
+  addToCart(body: { product_id: string; buy_count: number }) {
     return http.post<SuccessResponse<Purchase>>(`${URL}/add-to-cart`, body)
   },
-
-  getPurchasesByStatus: (params: { status: PurchaseListStatus }) => {
-    return http.get<SuccessResponse<Purchase[]>>(URL, { params })
+  getPurchases(params: { status: PurchaseListStatus }) {
+    return http.get<SuccessResponse<Purchase[]>>(`${URL}`, {
+      params
+    })
   },
-
-  buyProducts: (body: { product_id: string; buy_count: number }[]) => {
+  buyProducts(body: { product_id: string; buy_count: number }[]) {
     return http.post<SuccessResponse<Purchase[]>>(`${URL}/buy-products`, body)
   },
-
-  updatePurchase: (body: { product_id: string; buy_count: number }) => {
+  updatePurchase(body: { product_id: string; buy_count: number }) {
     return http.put<SuccessResponse<Purchase>>(`${URL}/update-purchase`, body)
   },
-
-  deletePurchase: (body: { purchase_id: string }[]) => {
-    return http.delete<SuccessResponse<{ deleted_count: number }>>(`${URL}/purchases`, { data: body })
+  deletePurchase(purchaseIds: string[]) {
+    return http.delete<SuccessResponse<{ deleted_count: number }>>(`${URL}`, {
+      data: purchaseIds
+    })
   }
 }
 

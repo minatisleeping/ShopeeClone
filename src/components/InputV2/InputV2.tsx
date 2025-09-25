@@ -1,7 +1,7 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from 'react'
-import { FieldPath, FieldValues, useController, UseControllerProps } from 'react-hook-form'
+import { InputHTMLAttributes, useState } from 'react'
+import { FieldValues, FieldPath, useController, UseControllerProps } from 'react-hook-form'
 
-export type PropsInputNumber<
+export type InputNumberProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
@@ -13,7 +13,7 @@ export type PropsInputNumber<
 function InputV2<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->(props: PropsInputNumber<TFieldValues, TName>) {
+>(props: InputNumberProps<TFieldValues, TName>) {
   const {
     type,
     onChange,
@@ -26,17 +26,15 @@ function InputV2<
   const { field, fieldState } = useController(props)
   const [localValue, setLocalValue] = useState<string>(field.value)
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const valueFromInput = event.target.value
     const numberCondition = type === 'number' && (/^\d+$/.test(valueFromInput) || valueFromInput === '')
-    if (numberCondition || type === 'text' || type !== 'number') {
-      // Update local value state
+    if (numberCondition || type !== 'number') {
+      // Cập nhật localValue state
       setLocalValue(valueFromInput)
-
-      // Call field.onChange to update value state in react hook form
+      // Gọi field.onChange để cập nhật vào state React Hook Form
       field.onChange(event)
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // Thực thi onChange callback từ bên ngoài truyền vào props
       onChange && onChange(event)
     }
   }
@@ -56,15 +54,15 @@ export default InputV2
 // }
 
 // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-// function Hexagon<TFunc extends () => string, TLastName extends ReturnType<TFunc>>(props: {
+// function Hexa<TFunc extends () => string, TLastName extends ReturnType<TFunc>>(props: {
 //   person: Gen<TFunc>
 //   lastName: TLastName
 // }) {
 //   return null
 // }
 
-// const handleName: () => 'minat' = () => 'minat'
+// const handleName: () => 'Duoc' = () => 'Duoc'
 
-// export function App() {
-//   return <Hexagon person={{ getName: handleName }} lastName='minat' />
+// function App() {
+//   return <Hexa person={{ getName: handleName }} lastName='Duoc' />
 // }

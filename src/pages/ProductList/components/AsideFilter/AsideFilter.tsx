@@ -6,9 +6,9 @@ import path from 'src/constants/path'
 import { Category } from 'src/types/category.type'
 import { useForm, Controller } from 'react-hook-form'
 import { Schema, schema } from 'src/utils/rules'
-import { yupResolver } from '@hookform/resolvers/dist/yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { NoUndefinedField } from 'src/types/utils.type'
-import RatingStar from 'src/pages/ProductList/components/RatingStar'
+import RatingStars from '../RatingStars'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
 import InputV2 from 'src/components/InputV2'
@@ -19,6 +19,11 @@ interface Props {
 }
 
 type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
+/**
+ * Rule validate
+ * Nếu có price_min và price_max thì price_max >= price_min
+ * Còn không thì có price_min thì không có price_max và ngược lại
+ */
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 
@@ -132,7 +137,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            {/* <Controller
+            <Controller
               control={control}
               name='price_min'
               render={({ field }) => {
@@ -151,8 +156,8 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                   />
                 )
               }}
-            /> */}
-            <InputV2
+            />
+            {/* <InputV2
               control={control}
               name='price_min'
               type='number'
@@ -163,7 +168,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               onChange={() => {
                 trigger('price_max')
               }}
-            />
+            /> */}
 
             <div className='mx-2 mt-2 shrink-0'>-</div>
             <Controller
@@ -195,13 +200,13 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       </div>
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='text-sm'>Đánh giá</div>
-      <RatingStar queryConfig={queryConfig} />
-      <div className='bg-gray-300 h-[1px] my-4' />
+      <RatingStars queryConfig={queryConfig} />
+      <div className='my-4 h-[1px] bg-gray-300' />
       <Button
-        className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
         onClick={handleRemoveAll}
+        className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
       >
-        Xoá tất cả
+        Xóa tất cả
       </Button>
     </div>
   )

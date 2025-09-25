@@ -1,3 +1,3 @@
-import ProductRating from 'src/components/ProductRating/ProductRating'
+import ProductRating from './ProductRating'
 
 export default ProductRating
