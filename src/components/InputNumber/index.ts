@@ -1,4 +1,4 @@
-import InputNumber from 'src/components/InputNumber/InputNumber'
+import InputNumber from './InputNumber'
 
 export default InputNumber
 

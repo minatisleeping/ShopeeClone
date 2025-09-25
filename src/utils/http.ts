@@ -1,62 +1,51 @@
 import axios, { AxiosError, type AxiosInstance } from 'axios'
-import { StatusCodes } from 'http-status-codes'
+import HttpStatusCode from 'src/constants/httpStatusCode.enum'
 import { toast } from 'react-toastify'
-import {
-  getAccessTokenFromLocalStorage,
-  clearFromLocalStorage,
-  storeAccessTokenToLocalStorage,
-  storeProfile
-} from './auth'
-import path from 'src/constants/path'
 import { AuthResponse } from 'src/types/auth.type'
+import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setProfileToLS } from './auth'
+import path from 'src/constants/path'
 
 class Http {
   instance: AxiosInstance
-  private access_token: string
-
+  private accessToken: string
   constructor() {
-    this.access_token = getAccessTokenFromLocalStorage()
+    this.accessToken = getAccessTokenFromLS()
     this.instance = axios.create({
       baseURL: 'https://api-ecom.duthanhduoc.com/',
       timeout: 10000,
-      headers: { 'Content-Type': 'application/json' }
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-
     this.instance.interceptors.request.use(
       (config) => {
-        if (this.access_token && config.headers) {
-          config.headers.authorization = this.access_token
+        if (this.accessToken && config.headers) {
+          config.headers.authorization = this.accessToken
           return config
         }
-
         return config
       },
       (error) => {
         return Promise.reject(error)
       }
     )
-
+    // Add a response interceptor
     this.instance.interceptors.response.use(
       (response) => {
         const { url } = response.config
         if (url === path.login || url === path.register) {
           const data = response.data as AuthResponse
-          this.access_token = (response.data as AuthResponse).data.access_token
-          storeAccessTokenToLocalStorage(this.access_token)
-          storeProfile(data.data.user)
-
-          return response
+          this.accessToken = data.data.access_token
+          setAccessTokenToLS(this.accessToken)
+          setProfileToLS(data.data.user)
         } else if (url === path.logout) {
-          this.access_token = ''
-          clearFromLocalStorage()
-
-          return response
+          this.accessToken = ''
+          clearLS()
         }
-
         return response
       },
-      (error: AxiosError) => {
-        if (error.response?.status !== StatusCodes.UNPROCESSABLE_ENTITY) {
+      function (error: AxiosError) {
+        if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const data: any | undefined = error.response?.data
           const message = data.message || error.message
@@ -69,4 +58,5 @@ class Http {
 }
 
 const http = new Http().instance
+
 export default http

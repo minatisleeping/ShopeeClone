@@ -1,3 +1,3 @@
-import ProductDetail from 'src/pages/ProductDetail/ProductDetail'
+import ProductDetail from './ProductDetail'
 
 export default ProductDetail

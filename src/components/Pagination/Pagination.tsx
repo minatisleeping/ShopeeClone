@@ -1,14 +1,35 @@
 import classNames from 'classnames'
-import { createSearchParams, Link } from 'react-router-dom'
+import { Link, createSearchParams } from 'react-router-dom'
 import path from 'src/constants/path'
-import { QueryConfig } from 'src/hooks/useQueryConfig'
+import { QueryConfig } from 'src/pages/ProductList/ProductList'
 
 interface Props {
   queryConfig: QueryConfig
   pageSize: number
 }
 
-const RANGE = 5
+/**
+Với range = 2 áp dụng cho khoảng cách đầu, cuối và xung quanh current_page
+
+[1] 2 3 ... 19 20
+1 [2] 3 4 ... 19 20 
+1 2 [3] 4 5 ... 19 20
+1 2 3 [4] 5 6 ... 19 20
+1 2 3 4 [5] 6 7 ... 19 20
+
+1 2 ... 4 5 [6] 8 9 ... 19 20
+
+1 2 ...13 14 [15] 16 17 ... 19 20
+
+
+1 2 ... 14 15 [16] 17 18 19 20
+1 2 ... 15 16 [17] 18 19 20
+1 2 ... 16 17 [18] 19 20
+1 2 ... 17 18 [19] 20
+1 2 ... 18 19 [20]
+ */
+
+const RANGE = 2
 export default function Pagination({ queryConfig, pageSize }: Props) {
   const page = Number(queryConfig.page)
 
@@ -61,59 +82,52 @@ export default function Pagination({ queryConfig, pageSize }: Props) {
               pathname: path.home,
               search: createSearchParams({
                 ...queryConfig,
-                page: String(pageNumber)
+                page: pageNumber.toString()
               }).toString()
             }}
             key={index}
-            className={classNames('bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer border', {
+            className={classNames('mx-2 cursor-pointer rounded border bg-white px-3 py-2 shadow-sm', {
               'border-cyan-500': pageNumber === page,
               'border-transparent': pageNumber !== page
             })}
-            onClick={handleScrollToTop}
           >
             {pageNumber}
           </Link>
         )
       })
   }
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
   return (
-    <div className='flex flex-wrap mt-6 justify-center'>
+    <div className='mt-6 flex flex-wrap justify-center'>
       {page === 1 ? (
-        <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-progress'>Prev</button>
+        <span className='mx-2 cursor-not-allowed rounded border bg-white/60 px-3 py-2  shadow-sm'>Prev</span>
       ) : (
         <Link
           to={{
             pathname: path.home,
             search: createSearchParams({
               ...queryConfig,
-              page: String(page - 1)
+              page: (page - 1).toString()
             }).toString()
           }}
-          className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'
-          onClick={handleScrollToTop}
+          className='mx-2 cursor-pointer rounded border bg-white px-3 py-2  shadow-sm'
         >
           Prev
         </Link>
       )}
+
       {renderPagination()}
       {page === pageSize ? (
-        <button className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-progress'>Next</button>
+        <span className='mx-2 cursor-not-allowed rounded border bg-white/60 px-3 py-2  shadow-sm'>Next</span>
       ) : (
         <Link
           to={{
             pathname: path.home,
             search: createSearchParams({
               ...queryConfig,
-              page: String(page + 1)
+              page: (page + 1).toString()
             }).toString()
           }}
-          className='bg-white rounded px-3 py-2 shadow-sm mx-2 cursor-pointer'
-          onClick={handleScrollToTop}
+          className='mx-2 cursor-pointer rounded border bg-white px-3 py-2  shadow-sm'
         >
           Next
         </Link>

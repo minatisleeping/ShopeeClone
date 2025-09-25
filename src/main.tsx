@@ -1,11 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from 'src/App'
+import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AppProvider } from 'src/contexts/app.context'
-import './index.css'
-import App from 'src/App'
+import { AppProvider } from './contexts/app.context'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,15 +15,15 @@ export const queryClient = new QueryClient({
   }
 })
 
-createRoot(document.getElementById('root')!).render(
-  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-    <StrictMode>
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AppProvider>
           <App />
         </AppProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
-    </StrictMode>
-  </BrowserRouter>
+    </BrowserRouter>
+  </React.StrictMode>
 )

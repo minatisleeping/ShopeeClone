@@ -1,8 +1,6 @@
-import { offset, shift } from '@floating-ui/dom'
-import { FloatingPortal, arrow, type Placement } from '@floating-ui/react'
-import { useFloating } from '@floating-ui/react-dom'
-import { AnimatePresence, motion } from 'framer-motion'
-import { type ElementType, useId, useRef, useState } from 'react'
+import { useState, useRef, useId, type ElementType } from 'react'
+import { useFloating, FloatingPortal, arrow, shift, offset, type Placement } from '@floating-ui/react-dom-interactions'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Props {
   children: React.ReactNode
@@ -13,53 +11,55 @@ interface Props {
   placement?: Placement
 }
 
-function Popover({
+export default function Popover({
   children,
-  renderPopover,
   className,
+  renderPopover,
   as: Element = 'div',
   initialOpen,
   placement = 'bottom-end'
 }: Props) {
-  const [isOpen, setOpen] = useState(initialOpen || false)
+  const [open, setOpen] = useState(initialOpen || false)
   const arrowRef = useRef<HTMLElement>(null)
-  const { refs, middlewareData, x, y, strategy } = useFloating({
+  const { x, y, reference, floating, strategy, middlewareData } = useFloating({
     middleware: [offset(6), shift(), arrow({ element: arrowRef })],
     placement: placement
   })
-
   const id = useId()
-  const showPopover = () => setOpen(true)
-  const hidePopover = () => setOpen(false)
-
+  const showPopover = () => {
+    setOpen(true)
+  }
+  const hidePopover = () => {
+    setOpen(false)
+  }
   return (
-    <Element className={className} ref={refs.setReference} onMouseEnter={showPopover} onMouseLeave={hidePopover}>
+    <Element className={className} ref={reference} onMouseEnter={showPopover} onMouseLeave={hidePopover}>
       {children}
       <FloatingPortal id={id}>
         <AnimatePresence>
-          {isOpen && (
+          {open && (
             <motion.div
-              ref={refs.setFloating}
+              ref={floating}
               style={{
                 position: strategy,
                 top: y ?? 0,
                 left: x ?? 0,
                 width: 'max-content',
-                transformOrigin: `${middlewareData?.arrow?.x}px top`
+                transformOrigin: `${middlewareData.arrow?.x}px top`
               }}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
+              initial={{ opacity: 0, transform: 'scale(0)' }}
+              animate={{ opacity: 1, transform: 'scale(1)' }}
+              exit={{ opacity: 0, transform: 'scale(0)' }}
               transition={{ duration: 0.2 }}
             >
               <span
                 ref={arrowRef}
-                className='border-x-transparent border-t-transparent border-b-white border-[11px] absolute translate-y-[-95%]'
+                className='absolute z-10 translate-y-[-95%] border-[11px] border-x-transparent border-t-transparent border-b-white'
                 style={{
-                  left: middlewareData?.arrow?.x,
-                  top: middlewareData?.arrow?.y
+                  left: middlewareData.arrow?.x,
+                  top: middlewareData.arrow?.y
                 }}
-              ></span>
+              />
               {renderPopover}
             </motion.div>
           )}
@@ -68,5 +68,3 @@ function Popover({
     </Element>
   )
 }
-
-export default Popover

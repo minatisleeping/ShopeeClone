@@ -1,12 +1,12 @@
-import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from 'react'
+import { forwardRef, InputHTMLAttributes, useState } from 'react'
 
-export interface PropsInputNumber extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputNumberProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string
   classNameInput?: string
   classNameError?: string
 }
 
-const InputNumber = forwardRef<HTMLInputElement, PropsInputNumber>(function InputNumberInner(
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumberInner(
   {
     errorMessage,
     className,
@@ -20,15 +20,15 @@ const InputNumber = forwardRef<HTMLInputElement, PropsInputNumber>(function Inpu
 ) {
   const [localValue, setLocalValue] = useState<string>(value as string)
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     if (/^\d+$/.test(value) || value === '') {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // Thực thi onChange callback từ bên ngoài truyền vào props
       onChange && onChange(event)
+      // Cập nhật localValue state
       setLocalValue(value)
     }
   }
-
   return (
     <div className={className}>
       <input className={classNameInput} onChange={handleChange} value={value || localValue} {...rest} ref={ref} />

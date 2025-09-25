@@ -1,3 +1,3 @@
-import SortProductList from 'src/pages/ProductList/components/SortProductList/SortProductList'
+import SortProductList from './SortProductList'
 
 export default SortProductList

@@ -7,7 +7,6 @@ export default function ProductRating({
   activeClassname?: string
   nonActiveClassname?: string
 }) {
-  const NUMBER_OF_STAR = 5
   const handleWidth = (order: number) => {
     if (order <= rating) {
       return '100%'
@@ -17,10 +16,9 @@ export default function ProductRating({
     }
     return '0%'
   }
-
   return (
     <div className='flex items-center'>
-      {Array(NUMBER_OF_STAR)
+      {Array(5)
         .fill(0)
         .map((_, index) => (
           <div className='relative' key={index}>

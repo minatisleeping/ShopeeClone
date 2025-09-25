@@ -2,19 +2,19 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import productApi from 'src/apis/product.api'
 import purchaseApi from 'src/apis/purchase.api'
+import { toast } from 'react-toastify'
 import ProductRating from 'src/components/ProductRating'
 import QuantityController from 'src/components/QuantityController'
 import { purchasesStatus } from 'src/constants/purchase'
 import { queryClient } from 'src/main'
-import Product from 'src/pages/ProductList/components/Product/Product'
-import { ProductListConfig, Product as ProductType } from 'src/types/product.type'
+import { Product as ProductType, ProductListConfig } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
+import Product from '../ProductList/components/Product'
 
 export default function ProductDetail() {
-  const [buyCount, setBuyCount] = useState<number>(1)
+  const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const { data: productDetailData } = useQuery({
@@ -29,15 +29,16 @@ export default function ProductDetail() {
     () => (product ? product.images.slice(...currentIndexImages) : []),
     [product, currentIndexImages]
   )
-
   const queryConfig: ProductListConfig = { limit: '20', page: '1', category: product?.category._id }
+
   const { data: productsData } = useQuery({
     queryKey: ['products', queryConfig],
-    queryFn: () => productApi.getProductWithPagination(queryConfig),
+    queryFn: () => {
+      return productApi.getProducts(queryConfig)
+    },
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(product)
   })
-
   const addToCartMutation = useMutation(purchaseApi.addToCart)
 
   useEffect(() => {
@@ -58,7 +59,9 @@ export default function ProductDetail() {
     }
   }
 
-  const chooseActive = (img: string) => setActiveImage(img)
+  const chooseActive = (img: string) => {
+    setActiveImage(img)
+  }
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -80,25 +83,27 @@ export default function ProductDetail() {
     image.style.left = left + 'px'
   }
 
-  const handleRemoveZoom = () => imageRef.current?.removeAttribute('style')
+  const handleRemoveZoom = () => {
+    imageRef.current?.removeAttribute('style')
+  }
 
-  const handleBuyCount = (value: number) => setBuyCount(value)
+  const handleBuyCount = (value: number) => {
+    setBuyCount(value)
+  }
 
-  const addToCart = () =>
+  const addToCart = () => {
     addToCartMutation.mutate(
-      { product_id: product?._id as string, buy_count: buyCount },
+      { buy_count: buyCount, product_id: product?._id as string },
       {
         onSuccess: (data) => {
           toast.success(data.data.message, { autoClose: 1000 })
-          queryClient.invalidateQueries({
-            queryKey: ['purchases', { status: purchasesStatus.inCart }]
-          })
+          queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
         }
       }
     )
+  }
 
   if (!product) return null
-
   return (
     <div className='bg-gray-200 py-6'>
       <div className='container'>
@@ -236,23 +241,26 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className='container'>
-        <div className='mt-8 bg-white p-4 shadow'>
-          <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>Mô tả sản phẩm</div>
-          <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(product.description)
-              }}
-            />
+      <div className='mt-8'>
+        <div className='container'>
+          <div className=' bg-white p-4 shadow'>
+            <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>Mô tả sản phẩm</div>
+            <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(product.description)
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
+
       <div className='mt-8'>
         <div className='container'>
-          <div className='uppercase text-gray-400'>Có thể bạn cũng thích! Hoặc không :)))</div>
+          <div className='uppercase text-gray-400'>CÓ THỂ BẠN CŨNG THÍCH</div>
           {productsData && (
-            <div className='mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3'>
+            <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
               {productsData.data.data.products.map((product) => (
                 <div className='col-span-1' key={product._id}>
                   <Product product={product} />
